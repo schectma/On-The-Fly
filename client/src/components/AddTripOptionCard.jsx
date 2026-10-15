@@ -1,0 +1,41 @@
+import { useParams } from 'react-router';
+import './Card.css'
+
+
+const AddTripOptionCard = (props) =>  {
+  const {destination_id} = useParams();
+
+  const addToTrip = async (event) => {
+    event.preventDefault();
+
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ trip_id: props.id, destination_id: parseInt(destination_id) })
+    }
+
+    const response = await fetch('/api/trips-destinations', options)
+
+    // the server rejects a destination that's already on this trip
+    if (!response.ok) {
+      alert('This destination is already on that trip.')
+      return
+    }
+
+    window.location.href = '/trip/get/' + props.id
+  }
+
+  return (
+      <div className="Card" style={{ backgroundImage:`url(${props.img_url})`}} >
+        <div className="card-info">
+          <h2 className="title">{props.title}</h2>
+          <p className="description">{props.description}</p>
+          <button className="addToTrip" onClick={addToTrip}>+ Add to Trip</button>
+        </div>
+      </div>
+  );
+};
+
+export default AddTripOptionCard;
